@@ -9,10 +9,10 @@ import { faqs } from "@/data/faqs";
 
 const FAQ = () => {
   return (
-    <section className="w-full bg-black py-12 md:py-24">
+    <section className="w-full bg-background py-12 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl font-bold mb-4">
+          <h2 className="text-3xl text-muted-foreground font-bold mb-4">
             Frequently Asked Questions
           </h2>
           <p className="text-muted-foreground">
@@ -24,10 +24,12 @@ const FAQ = () => {
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-left">
+                <AccordionTrigger className="text-left ">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent>{faq.answer}</AccordionContent>
+                <AccordionContent className="text-muted-foreground">
+                  {faq.answer}
+                </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
