@@ -18,6 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Theme from "./Theme";
 
 const Header = () => {
   return (
@@ -86,7 +87,7 @@ const Header = () => {
               <Button variant="outline">Sign In</Button>
             </SignInButton>
           </SignedOut>
-
+          <Theme />
           <SignedIn>
             <UserButton
               appearance={{
