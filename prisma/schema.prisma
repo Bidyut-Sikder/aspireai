@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  clerkUserId     String           @unique
+  email           String           @unique
+  name            String?
+  imageUrl        String?
+  industry        String?
+  industryInsight IndustryInsight? @relation(fields: [industry], references: [industry])
+  createdAt       DateTime         @default(now())
+  updateAt        DateTime         @updatedAt
+  bio             String?
+  experience      Int?
+  skills          String[]
+
+  assessments Assessment[]
+  coverleter  Coverletter[]
+  resume      Resume?
+}
+
+model IndustryInsight {
+  id       String @id @default(uuid())
+  industry String @unique
+  users    User[]
+
+  salaryRanges Json[]
+  growthRate   Float
+  demandLevel String
+  topSkills    String[]
+}
+
+model Assessment {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  quizScore      Float
+  questions      Json[]
+  category       String
+  improvementTip String?
+  createdAt      DateTime @default(now())
+  updateAt       DateTime @updatedAt
+
+  @@index([userId]) //directly grabs the exact data
+}
+
+model Coverletter {
+  id             String   @id @default(uuid())
+  userId         String?
+  user           User?    @relation(fields: [userId], references: [id])
+  content        String
+  jobDescription String?
+  companyName    String?
+  jobTitle       String
+  createdAt      DateTime @default(now())
+  updateAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Resume {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User?    @relation(fields: [userId], references: [id])
+  content   String   @db.Text //markdown data 
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+}

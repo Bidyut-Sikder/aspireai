@@ -4,9 +4,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import { dark, neobrutalism, shadesOfPurple } from "@clerk/themes";
+import { dark } from "@clerk/themes";
 import { ClerkProvider } from "@clerk/nextjs";
-import { cookies } from "next/headers";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +28,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const theme = cookieStore.get("theme")?.value || "light"; // Default to light if no cookie
 
   return (
     <ClerkProvider
