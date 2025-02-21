@@ -21,6 +21,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 type IndustryProps = {
   id: string;
   name: string;
@@ -67,17 +68,19 @@ const OnboardingForm = ({ industries }: Props) => {
               <Label htmlFor="industry">Industry</Label>
               <Select
                 onValueChange={(value) => {
-                  setValue("industry", value);
-                  console.log(
-                    industries.filter((industry) => industry.id === value)[0] ||
-                      null
-                  );
+                  setValue("industry", value, { shouldValidate: true }); // Ensure validation updates
                   setSelectedIndustry(
-                    industries.filter((industry) => industry.id === value)[0] ||
-                      null
-                    // industries.find((industry) => industry.id === value) || null
+                    industries.find((industry) => industry.id === value) || null
                   );
-                  setValue("subIndustry", "");
+                  setValue("subIndustry", "", { shouldValidate: true }); // Reset subIndustry
+                  //   setValue("industry", value);
+
+                  //   setSelectedIndustry(
+                  //     industries.filter((industry) => industry.id === value)[0] ||
+                  //       null
+                  //     // industries.find((industry) => industry.id === value) || null
+                  //   );
+                  //   setValue("subIndustry", "");
                 }}
               >
                 <SelectTrigger id="industry">
@@ -95,16 +98,18 @@ const OnboardingForm = ({ industries }: Props) => {
               {errors.industry && (
                 <p className="text-sm text-red-500">
                   {errors.industry.message}
+                  {/* {JSON.stringify(errors.industry)} */}
                 </p>
               )}
             </div>
 
             {watchIndustry && (
               <div className="space-y-2">
-                <Label htmlFor="industry">Specialization</Label>
+                <Label htmlFor="subIndustry">Specialization</Label>
                 <Select
                   onValueChange={(value) => {
-                    setValue("subIndustry", value);
+                    // setValue("subIndustry", value);
+                    setValue("subIndustry", value, { shouldValidate: true });
                   }}
                 >
                   <SelectTrigger id="subIndustry">
@@ -122,6 +127,7 @@ const OnboardingForm = ({ industries }: Props) => {
                 {errors.subIndustry && (
                   <p className="text-sm text-red-500">
                     {errors.subIndustry.message}
+                    {/* {JSON.stringify(errors.subIndustry)} */}
                   </p>
                 )}
               </div>
@@ -172,6 +178,10 @@ const OnboardingForm = ({ industries }: Props) => {
                 <p className="text-sm text-red-500">{errors.bio.message}</p>
               )}
             </div>
+
+            <Button type="submit" className="w-full">
+              Create Profile
+            </Button>
           </form>
         </CardContent>
       </Card>
