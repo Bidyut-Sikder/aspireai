@@ -18,8 +18,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Theme from "./Theme";
+import { checkUser } from "@/lib/checkUser";
 
-const Header = () => {
+const Header = async() => {
+const user = await checkUser();
+// console.log(user)
   return (
     <header
       className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md
