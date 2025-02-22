@@ -6,7 +6,7 @@ import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import { dark } from "@clerk/themes";
 import { ClerkProvider } from "@clerk/nextjs";
-
+import { Toaster } from "@/components/ui/sonner"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,7 +49,7 @@ export default async function RootLayout({
             <Header />
 
             <main className="min-h-screen"> {children}</main>
-
+            <Toaster richColors/>
             <Footer />
           </ThemeProvider>
         </body>

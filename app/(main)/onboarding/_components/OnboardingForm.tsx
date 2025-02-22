@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { onBoardingSchema } from "@/lib/schema";
@@ -22,6 +22,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import useFetch from "@/hooks/useFetch";
+import { userUpdate } from "@/actions/user";
+import { toast } from "sonner";
 type IndustryProps = {
   id: string;
   name: string;
@@ -44,11 +47,28 @@ const OnboardingForm = ({ industries }: Props) => {
 
     formState: { errors },
   } = useForm({ resolver: zodResolver(onBoardingSchema) });
+  const { loading, fn, data } = useFetch(userUpdate);
 
-  const submitHandler = (data: any) => {
-    console.log(data);
+  const submitHandler = async (data: any) => {
+    try {
+      const formattedIndustry = `${data.industry}-${data.subIndustry
+        .toLowerCase()
+        .replace(/ /g, "-")}`;
+      await fn({ ...data, industry: formattedIndustry });
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update user");
+    }
   };
-
+  useEffect(() => {
+    if (data?.success && !loading) {
+      setTimeout(() => {
+        toast.success("Profile completed successfully!");
+        router.push("/dashboard");
+        router.refresh();
+      }, 0);
+    }
+  }, [data, loading]);
   const watchIndustry = watch("industry");
   return (
     <div className="flex items-center justify-center bg-background">
@@ -179,8 +199,8 @@ const OnboardingForm = ({ industries }: Props) => {
               )}
             </div>
 
-            <Button type="submit" className="w-full">
-              Create Profile
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Sending.." : "Create Profile"}
             </Button>
           </form>
         </CardContent>
