@@ -28,9 +28,7 @@ export const generateQuiz = async () => {
 
   try {
     const prompt = `
-  Generate 3 technical interview questions for a ${
-    user.industry
-  } professional${
+  Generate 3 technical interview questions for a ${user.industry} professional${
       user.skills?.length ? ` with expertise in ${user.skills.join(", ")}` : ""
     }.
   
@@ -68,7 +66,6 @@ export const saveQuestionResults = async (
   anwsers: any,
   score: any
 ) => {
- 
   const { userId } = await auth();
 
   if (!userId) {
@@ -142,5 +139,38 @@ export const saveQuestionResults = async (
   } catch (error) {
     console.error(error);
     throw new Error("Error processing the assessment request");
+  }
+};
+
+export const getAssessments = async () => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      clerkUserId: userId,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  try {
+    const assessments = prisma.assessment.findMany({
+      where: {
+        userId: user.id,
+      },
+      orderBy:{
+        createdAt: 'asc'
+      }
+    });
+    return assessments;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error processing the getAssessment request");
   }
 };
