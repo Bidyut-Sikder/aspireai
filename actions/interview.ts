@@ -28,7 +28,7 @@ export const generateQuiz = async () => {
 
   try {
     const prompt = `
-  Generate 10 technical interview questions for a ${
+  Generate 3 technical interview questions for a ${
     user.industry
   } professional${
       user.skills?.length ? ` with expertise in ${user.skills.join(", ")}` : ""
@@ -55,6 +55,7 @@ export const generateQuiz = async () => {
 
     const cleanText = response.replace(/```(?:json)?\n?/g, "").trim();
     const quiz = JSON.parse(cleanText);
+
     return quiz.questions;
   } catch (error) {
     console.error(error);
@@ -136,6 +137,7 @@ export const saveQuestionResults = async (
         improvementTip,
       },
     });
+
     return assessment;
   } catch (error) {
     console.error(error);

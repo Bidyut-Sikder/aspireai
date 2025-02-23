@@ -24,36 +24,48 @@ const Quiz = () => {
 
   const { loading, data, fn } = useFetch(generateQuiz);
   const {
+    setData: setSavedData,
     loading: savingLoading,
     data: savedData,
     fn: savingFunction,
   } = useFetch(saveQuestionResults);
-  //   useEffect(() => {
-  //     if (data) {
-  //       setAnswers(new Array(data.length).fill(undefined));
-  //     }
-  //   }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     setAnswers(new Array(data.length).fill(undefined));
+  //   }
+  // }, [data]);
   const handleAnswer = (userAnswer: any) => {
-    const newAnswers = [...answers];
-    // newAnswers.push(userAnswer)
+    // const newAnswers = [...answers];
+
     // newAnswers[currentQuestionNo] = userAnswer;
     // setAnswers(newAnswers);
     let Answers = [...answers];
     Answers.push(userAnswer);
-    // console.log(Answers);
     setAnswers(Answers);
   };
-  console.log(answers);
+
   if (loading) {
     return <BarLoader className="mt-4" width={"100%"} color="gray" />;
   }
+  const startNewQuiz = () => {
+    setCurrentQuestionNo(0);
+    setAnswers([]);
+    setExplanation(false);
+    setSavedData(null);
+    fn();
+  };
 
-
-if(savedData){
-  return <div className="mx-2">
-<QuizResult result={savedData} onStartNew={fn} />
-  </div>
-}
+  if (savedData) {
+    return (
+      <div className="mx-2">
+        <QuizResult
+          result={savedData}
+          onStartNew={startNewQuiz}
+          hideStartNew={false}
+        />
+      </div>
+    );
+  }
 
   if (!data) {
     return (
@@ -87,7 +99,7 @@ if(savedData){
   const finishQuiz = async () => {
     const score = calculateScore();
     try {
-      console.log(score);
+      // console.log(score);
 
       await savingFunction(data, answers, score);
       toast.success(" Quiz completed successfully");
@@ -97,6 +109,7 @@ if(savedData){
   };
   const calculateScore = () => {
     let correct = 0;
+    // console.log(answers)
     answers.forEach((answer, i) => {
       if (answer === data[i].correctAnswer) {
         correct++;
