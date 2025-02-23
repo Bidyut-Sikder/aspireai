@@ -53,15 +53,12 @@ export const generateIndustryInsights = inngest.createFunction(
       );
 
       const textPart = res.response.candidates?.[0]?.content?.parts?.[0];
-      
-    
-      const text = textPart && "text" in textPart ? textPart.text : "";
-      
-   
-      const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
 
+      const text = textPart && "text" in textPart ? textPart.text : "";
+      const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
+      // console.log(cleanedText)
       const insights = JSON.parse(cleanedText);
-      console.log(insights)
+      // console.log(insights);
       await step.run(`update ${industry} insights`, async () => {
         await prisma.industryInsight.update({
           where: { industry: industry },
@@ -73,5 +70,25 @@ export const generateIndustryInsights = inngest.createFunction(
         });
       });
     }
+  }
+);
+
+export const geminiAPITesting = inngest.createFunction(
+  { id: "gemint-api-testing" },
+  { event: "testing/gemeniapi" },
+  async ({ event, step }) => {
+    const prompt = "how do you function";
+    const res = await step.ai.wrap(
+      "create-insights",
+      async (p) => {
+        return await model.generateContent(p);
+      },
+      prompt
+    );
+    console.log(JSON.stringify(res.response.usageMetadata?.promptTokenCount));
+    console.log(
+      JSON.stringify(res.response.usageMetadata?.candidatesTokenCount)
+    );
+    return { message: "success", res };
   }
 );
