@@ -14,10 +14,10 @@ const page = async () => {
           Interview Preparation
         </h1>
       </div>
-      <div>
+      <div className="space-y-6">
         <StatusCard assessments={assessments} />
-        <PerformanceChart />
-        <QuizList />
+        <PerformanceChart assessments={assessments} />
+        <QuizList assessments={assessments}/>
       </div>
     </div>
   );

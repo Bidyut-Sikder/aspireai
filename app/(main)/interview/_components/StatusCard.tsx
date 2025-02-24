@@ -7,6 +7,9 @@ interface StatusCardProps {
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({ assessments }) => {
+
+
+
   const getAvarageScore = () => {
     if (!assessments?.length) return 0;
     const total = assessments.reduce(
@@ -19,8 +22,10 @@ const StatusCard: React.FC<StatusCardProps> = ({ assessments }) => {
 
   const getLatestAssessment = () => {
     if (!assessments?.length) return null;
-    return assessments[0];
+    return assessments[assessments.length - 1];
+    // return assessments[0];
   };
+  // console.log(getLatestAssessment());
   const getTotalNumberOfQuestions = () => {
     if (!assessments?.length) return null;
 
@@ -30,7 +35,6 @@ const StatusCard: React.FC<StatusCardProps> = ({ assessments }) => {
     );
   };
 
-  console.log(getTotalNumberOfQuestions());
   return (
     <div className="mb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <Card>
@@ -46,17 +50,19 @@ const StatusCard: React.FC<StatusCardProps> = ({ assessments }) => {
         </CardContent>
       </Card>
 
-
       <Card>
         <CardHeader className="flex items-center flex-row justify-between spacey-0 pb-2">
-          <CardTitle className="text-sm font-medium">Questions Practiced.</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            Questions Practiced.
+          </CardTitle>
           <Brain className={`h-4 w-4 text-muted-foreground `} />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold"> {getTotalNumberOfQuestions()}</div>
-          <p className="text-xs text-muted-foreground">
-            Total questions.
-          </p>
+          <div className="text-2xl font-bold">
+            {" "}
+            {getTotalNumberOfQuestions()}
+          </div>
+          <p className="text-xs text-muted-foreground">Total questions.</p>
         </CardContent>
       </Card>
 
@@ -66,14 +72,13 @@ const StatusCard: React.FC<StatusCardProps> = ({ assessments }) => {
           <Trophy className={`h-4 w-4 text-muted-foreground `} />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold"> {getLatestAssessment()?.quizScore.toFixed(1)||0}</div>
-          <p className="text-xs text-muted-foreground">
-            Most recent quiz.
-          </p>
+          <div className="text-2xl font-bold">
+            {" "}
+            {getLatestAssessment()?.quizScore.toFixed(1) || 0}
+          </div>
+          <p className="text-xs text-muted-foreground">Most recent quiz.</p>
         </CardContent>
       </Card>
-
-
     </div>
   );
 };

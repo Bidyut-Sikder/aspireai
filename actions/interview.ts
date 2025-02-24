@@ -125,10 +125,11 @@ export const saveQuestionResults = async (
   }
 
   try {
+  
     const assessment = await prisma.assessment.create({
       data: {
         userId: user.id,
-        quizScore: score,
+        quizScore: parseFloat(score.toFixed(2)), // score,
         questions: questionResults,
         category: "Technical",
         improvementTip,
@@ -164,9 +165,9 @@ export const getAssessments = async () => {
       where: {
         userId: user.id,
       },
-      orderBy:{
-        createdAt: 'asc'
-      }
+      orderBy: {
+        createdAt: "asc",
+      },
     });
     return assessments;
   } catch (error) {
