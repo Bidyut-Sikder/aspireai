@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, Trophy, XCircle } from "lucide-react";
 import React from "react";
 
@@ -20,12 +21,16 @@ const QuizResult: React.FC<QuizResultProps> = ({
     <div className="mx-auto">
       <h1 className="flex items-center gap-2 text-3xl gradient-title">
         <Trophy className="h-6 w-6 text-yellow-500" />
-        Quiz Result : {result.quizScore.toFixed(1)}
+        Quiz Result : {result.quizScore.toFixed(2)}%
       </h1>
       <CardContent>
         {/* <div className="text-center space-y-2">
           <h3 className="text-2xl font-bold">{result.quizScore.toFixed(1)}</h3>
         </div> */}
+        <Progress
+          value={result.quizScore}
+          className="w-full mb-2 [&>div]:bg-green-500"
+        />
 
         {result.improvementTip && (
           <div className="bg-muted p-4 rounded-lg">

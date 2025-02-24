@@ -31,3 +31,41 @@ export const onBoardingSchema = z.object({
       : []
   ),
 });
+
+export const contactShema = z.object({
+  email: z.string().email("Please enter a valid email"),
+  mobile: z.string().optional(),
+  linkedin: z.string().optional(),
+  x: z.string().optional(),
+});
+
+export const entrySchema = z
+  .object({
+    title: z.string().min(1, "Title is required."),
+    organization: z.string().min(1, "organization is required."),
+    startDate: z.string().min(1, "Start date is required."),
+    endDate: z.string().optional(),
+    description: z.string().min(1, " description is required."),
+    current: z.boolean().default(false), //this is not optional field
+  })
+  .refine(
+    (data) => {
+      if (!data.current && !data.endDate) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Enddate is required. unless this is your current position.",
+      path: ["endDate"],
+    }
+  );
+
+export const resumeSchema = z.object({
+  contactInfo: contactShema,
+  summary: z.string().min(1, "Professional summary is required."),
+  skills: z.string().min(1, "Skills are required."),
+  experience: z.array(entrySchema),
+  education: z.array(entrySchema),
+  projects: z.array(entrySchema),
+});

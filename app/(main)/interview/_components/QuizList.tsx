@@ -28,7 +28,7 @@ const QuizList: React.FC<QuizListProps> = ({ assessments }) => {
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const router = useRouter();
 
-  console.log(selectedQuiz);
+
   return (
     <div>
       <Card >
