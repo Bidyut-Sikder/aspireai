@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { entrySchema, resumeSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, PlusCircle, Sparkles } from "lucide-react";
+import { Loader2, PlusCircle, Sparkles, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { format, parse } from "date-fns";
 import {
   Card,
   CardContent,
@@ -22,14 +23,13 @@ import { toast } from "sonner";
 interface EntryFormProps {
   type: string;
   entries: any; // Replace 'any' with the appropriate type if known
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (entries: any[]) => void;
 }
 
 const EntryForm: React.FC<EntryFormProps> = ({ type, entries, onChange }) => {
   const [isAdding, setIsAdding] = useState(false);
   const {
     register,
-
     control,
     handleSubmit,
     setValue,
@@ -54,10 +54,28 @@ const EntryForm: React.FC<EntryFormProps> = ({ type, entries, onChange }) => {
     error: errorOnImprove,
   } = useFetch(improveWithAI);
 
-  const handleAdd = handleSubmit(() => {
-    
+  const formatedDisplayDate = (dateString: string) => {
+    if (!dateString) return "";
+    const date = parse(dateString, "yyyy-MM", new Date());
+    return format(date, "MMM yyyy");
+  };
+
+  const handleAdd = handleSubmit((data: any) => {
+    const formattedEntry = {
+      ...data,
+      startDate: formatedDisplayDate(data.startDate),
+      endDate: data.current ? "" : formatedDisplayDate(data.endDate),
+    };
+    onChange([...entries, formattedEntry]);
+    // reset();
+    setIsAdding(false);
   });
-  const handeDelete = () => {};
+  const handeDelete = (index: number) => {
+    const newEntries = entries.filter((_: any, i: number) => i !== index);
+    onChange(newEntries);
+    reset()
+    // setIsAdding(false);
+  };
   const handleImproveDescription = async () => {
     const description = watch("description");
     if (!description) {
@@ -69,7 +87,6 @@ const EntryForm: React.FC<EntryFormProps> = ({ type, entries, onChange }) => {
       promptText: description,
       type: type.toLowerCase(),
     });
-
   };
 
   const current = watch("current");
@@ -80,6 +97,38 @@ const EntryForm: React.FC<EntryFormProps> = ({ type, entries, onChange }) => {
   }, [improvedContent, isImproving, errorOnImprove]);
   return (
     <div>
+      <div className="space-y-4">
+        {entries.map((item: any, i: number) => {
+          return (
+            <Card className="mb-3" key={i}>
+              <CardHeader className="flex flex-row items-center  justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  {item.title} @ {item.organization}
+                </CardTitle>
+                <Button
+                  variant={"outline"}
+                  size={"icon"}
+                  type="button"
+                  onClick={() => handeDelete(i)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  {item.current
+                    ? `${item.startDate} - Present`
+                    : `${item.startDate} - ${item.startDate} `}
+                </p>
+                <p className="mt-2 text-sm whitespace-pre-wrap">
+                  {item.description}
+                </p>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
       {isAdding && (
         <Card>
           <CardHeader>
@@ -192,11 +241,7 @@ const EntryForm: React.FC<EntryFormProps> = ({ type, entries, onChange }) => {
             >
               Cancel
             </Button>
-            <Button
-              type="button"
-              variant={"outline"}
-              onClick={handleAdd}
-            >
+            <Button type="button" variant={"outline"} onClick={handleAdd}>
               <PlusCircle className="h-4 w-4 mr-0" />
               Add Entry
             </Button>
